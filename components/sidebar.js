@@ -2,22 +2,20 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { GoHome } from "react-icons/go";
-import { SiYoutubeshorts, SiGooglemessages } from "react-icons/si";
+import { SiYoutubeshorts, SiGooglemessages, SiGoogleclassroom } from "react-icons/si";
 import { FaBuilding, FaChevronDown, FaChevronUp, FaBell, FaUsers, FaEnvelopeOpenText, FaCog, FaClipboardList } from "react-icons/fa";
-import { AiFillSetting, AiFillDashboard } from "react-icons/ai";
-import { MdOutlineManageAccounts } from "react-icons/md";
+import { AiFillSetting, AiFillDashboard, AiFillMessage } from "react-icons/ai";
+import { MdOutlineManageAccounts, MdSubscriptions, MdOutlineEmail, MdDashboard } from "react-icons/md";
 import Image from "next/image";
 import pic from "../app/public/mainlogo.png";
-import { useRouter } from "next/navigation";
-// Placeholder for profile image URL
+
 const profileImageUrl = "https://via.placeholder.com/150";
 
-// Sidebar items
 const sideitems = [
   {
     id: 1,
     name: "Dashboard",
-    icon: <AiFillDashboard />,
+    icon: <MdDashboard />,
     link: "/dashboard",
   },
   {
@@ -25,15 +23,15 @@ const sideitems = [
     name: "Companies/Firms",
     icon: <FaBuilding />,
     options: [
-      { name: "All Companies", link: "/companies-Firm" },
-      { name: "Companies Subscriptions", link: "/subscription" },
-      { name: "Subscription Transactions", link: "/Subscription-transactions" },
+      { name: "All Companies", icon: <FaBuilding />, link: "/companies-Firm" },
+      { name: "Companies Subscriptions", icon: <MdSubscriptions />, link: "/subscription" },
+      { name: "Subscription Transactions", icon: <FaClipboardList />, link: "/Subscription-transactions" },
     ],
   },
   {
     id: 3,
     name: "Packages",
-    icon: <SiGooglemessages />,
+    icon: <SiGoogleclassroom />,
     link: "/packages",
   },
   {
@@ -41,17 +39,16 @@ const sideitems = [
     name: "Staff Management",
     icon: <MdOutlineManageAccounts />,
     options: [
-      { name: "Staff", link: "/staff" },
-      { name: "Role and Permission", link: "/staffManagement(role)" },
-      { name: "Email Firms", link: "/emailFirm" },
-      { name: "Email Configuration", link: "/emailConfiguration" },
-      { name: "Landing Page Settings", link: "/landingPageSetting" },
-      { name: "My Clients", link: "/myClient" },
+      { name: "Staff", icon: <FaUsers />, link: "/staff" },
+      { name: "Role and Permission", icon: <AiFillSetting />, link: "/staffManagement(role)" },
+      { name: "Email Firms", icon: <FaEnvelopeOpenText />, link: "/emailFirm" },
+      { name: "Email Configuration", icon: <MdOutlineEmail />, link: "/emailConfiguration" },
+      { name: "Landing Page Settings", icon: <SiGooglemessages />, link: "/landingPageSetting" },
+      { name: "My Clients", icon: <FaUsers />, link: "/myClient" },
     ],
   },
 ];
 
-// Custom scrollbar styles
 const scrollbarStyles = `
   ::-webkit-scrollbar {
     width: 8px;
@@ -74,7 +71,6 @@ export default function Sidebar({ children, navTitle }) {
     staff: false,
   });
   const [selectedOption, setSelectedOption] = useState(null);
-  const router = useRouter();
 
   const toggleDropdown = (name) => {
     setDropdownOpen((prevState) => ({
@@ -87,14 +83,9 @@ export default function Sidebar({ children, navTitle }) {
     setSelectedOption(option);
   };
 
-  const handleNavigation = (link) => {
-    router.push(link);
-  };
-
   return (
     <div className="flex h-screen overflow-hidden">
       <style>{scrollbarStyles}</style>
-      {/* Sidebar */}
       <div className="w-64 bg-black text-white flex flex-col justify-between overflow-y-auto shadow-lg fixed h-full">
         <div className="p-6">
           <Image src={pic} alt="Logo" className="mx-auto w-32 h-auto" />
@@ -118,21 +109,19 @@ export default function Sidebar({ children, navTitle }) {
                     {dropdownOpen.companies && (
                       <div className="ml-6 mt-2 space-y-2">
                         {item.options.map((option, index) => (
-                          <button
-                            key={index}
-                            className={`w-full flex items-center text-left py-2 px-4 rounded-lg focus:outline-none transition duration-200 ease-in-out ${
-                              selectedOption === option.name
-                                ? "bg-indigo-500 text-white"
-                                : "hover:bg-gray-800 text-gray-300"
-                            }`}
-                            onClick={() => {
-                              handleNavigation(option.link);
-                              handleOptionSelect(option.name);
-                            }}
-                          >
-                            <span className="mr-2">{item.icon}</span>
-                            {option.name}
-                          </button>
+                          <Link href={option.link} key={index}>
+                            <span
+                              className={`w-full flex items-center text-left py-2 px-4 rounded-lg focus:outline-none transition duration-200 ease-in-out text-xs ${
+                                selectedOption === option.name
+                                  ? "bg-blue-400 text-white whitespace-nowrap"
+                                  : "hover:bg-gray-800 text-gray-300 whitespace-nowrap"
+                              }`}
+                              onClick={() => handleOptionSelect(option.name)}
+                            >
+                              <span className="mr-2">{option.icon}</span>
+                              {option.name}
+                            </span>
+                          </Link>
                         ))}
                       </div>
                     )}
@@ -140,16 +129,21 @@ export default function Sidebar({ children, navTitle }) {
                 );
               }
 
-              if (item.name === "Packages") {
+              if (item.name === "Packages" || item.name === "Dashboard") {
                 return (
-                  <button
-                    key={item.id}
-                    className="flex items-center hover:bg-gray-800 rounded-lg p-2 mb-2 cursor-pointer transition duration-200 ease-in-out"
-                    onClick={() => handleNavigation(item.link)}
-                  >
-                    <div className="text-white mr-2">{item.icon}</div>
-                    <span>{item.name}</span>
-                  </button>
+                  <Link href={item.link} key={item.id}>
+                    <span
+                      className={`w-full flex items-center hover:bg-gray-800 rounded-lg p-2 mb-2 cursor-pointer transition duration-200 ease-in-out ${
+                        selectedOption === item.name
+                          ? "bg-blue-400 text-white"
+                          : "text-gray-300"
+                      }`}
+                      onClick={() => handleOptionSelect(item.name)}
+                    >
+                      <div className="text-white mr-2">{item.icon}</div>
+                      <span>{item.name}</span>
+                    </span>
+                  </Link>
                 );
               }
 
@@ -171,21 +165,19 @@ export default function Sidebar({ children, navTitle }) {
                     {dropdownOpen.staff && (
                       <div className="ml-6 mt-2 space-y-2">
                         {item.options.map((option, index) => (
-                          <button
-                            key={index}
-                            className={`w-full flex items-center text-left py-2 px-4 rounded-lg focus:outline-none transition duration-200 ease-in-out ${
-                              selectedOption === option.name
-                                ? "bg-indigo-500 text-white"
-                                : "hover:bg-gray-800 text-gray-300"
-                            }`}
-                            onClick={() => {
-                              handleNavigation(option.link);
-                              handleOptionSelect(option.name);
-                            }}
-                          >
-                            <span className="mr-2">{item.icon}</span>
-                            {option.name}
-                          </button>
+                          <Link href={option.link} key={index}>
+                            <span
+                              className={`w-full flex items-center text-left py-2 px-4 rounded-lg focus:outline-none transition duration-200 ease-in-out text-xs ${
+                                selectedOption === option.name
+                                  ? "bg-indigo-500 text-white whitespace-nowrap"
+                                  : "hover:bg-gray-800 text-gray-300 whitespace-nowrap"
+                              }`}
+                              onClick={() => handleOptionSelect(option.name)}
+                            >
+                              <span className="mr-2">{option.icon}</span>
+                              {option.name}
+                            </span>
+                          </Link>
                         ))}
                       </div>
                     )}
@@ -194,23 +186,18 @@ export default function Sidebar({ children, navTitle }) {
               }
 
               return (
-                <button
-                  key={item.id}
-                  className="flex items-center hover:bg-gray-800 rounded-lg p-2 mb-2 cursor-pointer transition duration-200 ease-in-out"
-                  onClick={() => handleNavigation(item.link)}
-                >
-                  <div className="text-white mr-2">{item.icon}</div>
-                  <span>{item.name}</span>
-                </button>
+                <Link href={item.link} key={item.id}>
+                  <span className="w-full flex items-center hover:bg-gray-800 rounded-lg p-2 mb-2 cursor-pointer transition duration-200 ease-in-out">
+                    <div className="text-white mr-2">{item.icon}</div>
+                    <span>{item.name}</span>
+                  </span>
+                </Link>
               );
             })}
           </div>
         </div>
       </div>
-
-      {/* Main Content */}
       <div className="flex-1 bg-gray-50 ml-64 overflow-y-auto">
-        {/* Navbar */}
         <div className="bg-white text-black py-4 px-6 flex justify-between items-center shadow-md ">
           <div className="text-xl font-semibold">{navTitle}</div>
           <div className="flex items-center space-x-4">
@@ -229,7 +216,6 @@ export default function Sidebar({ children, navTitle }) {
             </div>
           </div>
         </div>
-        {/* Content */}
         <div className="p-6">{children}</div>
       </div>
     </div>

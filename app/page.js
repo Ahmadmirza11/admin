@@ -43,7 +43,7 @@ const LoginPage = () => {
           <div className="text-right">
             <p className="text-[#52bdcd] cursor-pointer">Forgot Password?</p>
           </div>
-          <button className="bg-[#52bdcd] w-full p-2 mt-3 rounded-md text-white">Login</button>
+          <button onClick={dashboardPage} className="bg-[#52bdcd] w-full p-2 mt-3 rounded-md text-white">Login</button>
         </form>
       </div>
     </div>
