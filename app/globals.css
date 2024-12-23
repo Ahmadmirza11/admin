@@ -18,16 +18,3 @@ html, body, #__next {
     display: flex;
   }
   
-
-
-
-  
-  /* styles/globals.css */
-.hide-scrollbar {
-  scrollbar-width: none; /* For Firefox */
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none; /* For WebKit browsers */
-  width: 0;
-}
