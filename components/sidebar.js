@@ -20,6 +20,12 @@ const sideitems = [
   },
   {
     id: 2,
+    name: "Lead Management",
+    icon: <FaUsers />, // Use an appropriate icon for Lead Management
+    link: "/leadManagement", // Add the appropriate link
+  },
+  {
+    id: 3,
     name: "Companies/Firms",
     icon: <FaBuilding />,
     options: [
@@ -29,13 +35,13 @@ const sideitems = [
     ],
   },
   {
-    id: 3,
+    id: 4,
     name: "Packages",
     icon: <SiGoogleclassroom />,
     link: "/packages",
   },
   {
-    id: 4,
+    id: 5,
     name: "Staff Management",
     icon: <MdOutlineManageAccounts />,
     options: [
@@ -129,7 +135,7 @@ export default function Sidebar({ children, navTitle }) {
                 );
               }
 
-              if (item.name === "Packages" || item.name === "Dashboard") {
+              if (item.name === "Lead Management" || item.name === "Packages" || item.name === "Dashboard") {
                 return (
                   <Link href={item.link} key={item.id}>
                     <span

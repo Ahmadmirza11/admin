@@ -11,7 +11,7 @@ import admin2 from '../../app/public/bill.jpg';
 import admin3 from '../../app/public/bill.jpg';
 import admin4 from '../../app/public/bill.jpg';
 import admin5 from '../../app/public/bill.jpg';
-import Circle from '../percentageCircle/circle'
+import Circle from '../percentageCircle/circle';
 
 const firms = [
   { number: '01', logo: dysonLogo, firm: 'L\'Oréal', admin: 'Lane', adminImg: admin1 },
@@ -27,13 +27,8 @@ const Firms = () => {
   return (
     <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-8">
       {/* Percentage Circle Section */}
-      <div className="percentage-section w-full lg:w-2/3 bg-white p-4 shadow-lg rounded-lg flex flex-col ">
+      <div className="percentage-section w-full lg:w-2/3 bg-white p-4 shadow-lg rounded-lg flex flex-col justify-center items-center">
         <Circle percentage={percentage} title="Completion" />
-        <style jsx>{`
-          .percentage-section {
-            height: 353px; /* Adjust to match the desired height */
-          }
-        `}</style>
       </div>
 
       {/* Table Section */}

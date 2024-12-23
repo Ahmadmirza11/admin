@@ -1,3 +1,4 @@
+// components/RootLayout.js
 "use client";
 import React, { useState, useEffect } from "react";
 import localFont from "next/font/local";
@@ -6,6 +7,8 @@ import Sidebar from "@/components/sidebar";
 import { usePathname } from 'next/navigation';
 import Loader from "../components/loader";
 import NextTopLoader from "nextjs-toploader";
+import { Provider } from 'react-redux';
+import { store } from '../redux/store';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,19 +37,21 @@ export default function RootLayout({ children }) {
   }, []);
 
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {loading ? (
-          <Loader />
-        ) : (
-          <>
-            {showSidebar ? <Sidebar>{children}</Sidebar> : children}
-            <NextTopLoader/>
-          </>
-        )}
-      </body>
-    </html>
+    <Provider store={store}>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              {showSidebar ? <Sidebar>{children}</Sidebar> : children}
+              <NextTopLoader/>
+            </>
+          )}
+        </body>
+      </html>
+    </Provider>
   );
 }
