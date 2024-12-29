@@ -6,7 +6,7 @@ const CompanyFirm2 = () => {
   return (
     <div >
       <AddFirmForm/>
-      <AddAdmin/>
+      {/* <AddAdmin/> */}
     </div>
   )
 }

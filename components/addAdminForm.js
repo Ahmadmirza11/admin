@@ -5,7 +5,7 @@ import { MdOutlineCloudUpload } from "react-icons/md";
 
 const AddAdmin = () => {
   const router=useRouter()
-  const FirmDetails=()=>{
+  const FirmDetails=()=>{ 
     router.push("/firmDetail")
   }
   return (

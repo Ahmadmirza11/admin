@@ -60,7 +60,6 @@ const EditPackageModal = ({ isOpen, onClose, onSave, packageData }) => {
             <label className="block text-left mb-1">Amount</label>
             <input
               name="amount"
-              type="number"
               value={formData?.amount || ''}
               onChange={handleChange}
               required

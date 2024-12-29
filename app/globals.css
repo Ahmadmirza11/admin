@@ -18,3 +18,38 @@ html, body, #__next {
     display: flex;
   }
   
+
+
+
+
+
+
+
+
+
+
+
+/* styles/globals.css */
+:root {
+  --background: #f0f0f0; /* Replace with your desired background color */
+  --foreground: #333333; /* Replace with your desired foreground color */
+}
+
+html, body {
+  background: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Hide all scroll bars */
+  font-family: sans-serif;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+

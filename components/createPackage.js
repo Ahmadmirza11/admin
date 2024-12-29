@@ -11,9 +11,8 @@ import { useSelector } from "react-redux";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Enter your name"),
-  amount: Yup.number()
-    .required("Price is required")
-    .positive("Price must be positive"),
+  amount: Yup.string()
+    .required("Price is required"),
   tags: Yup.string().required("Tagline is required"),
   features: Yup.array()
     .of(Yup.string().required("Feature is required"))
@@ -94,7 +93,6 @@ const CreatePackage = ({onPackageCreated}) => {
                     name="amount"
                     className="border border-black rounded-lg w-full p-2"
                     placeholder="Enter price"
-                    type="number"
                     value={values.amount}
                     onChange={handleChange}
                   />

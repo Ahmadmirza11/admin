@@ -1,81 +1,302 @@
-import React from "react";
+"use client";
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import ImageUploading from 'react-images-uploading';
 import { MdOutlineCloudUpload } from "react-icons/md";
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Ensure to import CSS for notifications
+import { ThreeDots } from 'react-loader-spinner';
 
-const CompanyFirm2 = () => {
-  return (
-    <div className="p-2  flex items-center justify-center">
-      <div className="bg-white w-full max-w-6xl p-4 md:p-8 rounded-lg shadow-lg flex flex-col md:flex-row justify-between">
-        <div className="md:w-1/2">
-          <h2 className="text-2xl font-bold mb-4">Add Firm</h2>
-          {/* uploader */}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Logo Of Firm</label>
-            <div className="border-dashed border-2 border-gray-300 p-4 rounded-md text-center text-gray-400 cursor-pointer">
-              <MdOutlineCloudUpload className="h-5 w-5 mx-auto mb-2" />
-              <p>Click to replace or drag and drop SVG, PNG, JPG or GIF (max. 400 x 400px)</p>
+const AddFirm = () => {
+    const selectedFirm = useSelector((state) => state.firms.selectedFirm);
+    const token = useSelector((state) => state.auth.token);
+    
+    const [images, setImages] = useState([]);
+    const [adminImages, setAdminImages] = useState([]);
+    const [formData, setFormData] = useState({
+        email: selectedFirm?.email || '',
+        address: selectedFirm?.address || '',
+        name: selectedFirm?.name || '',
+        phone: selectedFirm?.phone || '',
+        registration: selectedFirm?.registration || '',
+        firstName: '',
+        lastName: '',
+        adminEmail: '',
+        adminPassword: ''
+    });
+    const [loading, setLoading] = useState(false); // Loading state
+
+    const onChange = (imageList) => {
+        setImages(imageList);
+    };
+
+    const onAdminChange = (imageList) => {
+        setAdminImages(imageList);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true); // Set loading to true when starting the request
+
+        const dataToSend = {
+            name: formData.name,
+            registration: formData.registration,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            adminfname: formData.firstName,
+            adminlname: formData.lastName,
+            adminemail: formData.adminEmail,
+            password: formData.adminPassword,
+        };
+
+        try {
+            const response = await axios.put(`https://accountingsaas.onrender.com/api/users/admin/edit-firm/${selectedFirm._id}`, dataToSend, {
+                headers: { 
+                    'x-auth-token': token,
+                    'Content-Type': 'application/json', // Set content type to JSON
+                }
+            });
+            console.log("Response:", response.data);
+            toast.success("Successfully updated the firm!");
+        } catch (error) {
+            if (error.response) {
+                console.error("Error response:", error.response.data);
+                toast.error("Error: " + error.response.data.message || "Something went wrong.");
+            } else {
+                console.error("Error:", error.message);
+                toast.error("Error: " + error.message);
+            }
+        } finally {
+            setLoading(false); // Set loading to false after the request completes
+        }
+    };
+
+    return (
+        <div>
+            <div className='bg-white shadow-xl rounded-lg p-4'>
+                <p className='text-3xl font-bold'>Add Firm</p>
+                <div className='flex justify-start'>
+                    <div className='mt-5 flex-1'>
+                        <div className='flex flex-row space-x-8 items-center'>
+                            <p>Logo of Firm</p>
+                            <ImageUploading
+                                multiple={false}
+                                value={images}
+                                onChange={onChange}
+                                maxNumber={1}
+                                dataURLKey="data_url"
+                            >
+                                {({ imageList, onImageUpload, onImageRemoveAll }) => (
+                                    <div className='border-dashed rounded-md p-1 border-2 py-6 flex flex-col items-center'>
+                                        {imageList.length === 0 ? (
+                                            <div
+                                                className='cursor-pointer text-gray-500 text-center'
+                                                onClick={onImageUpload}
+                                            >
+                                                <MdOutlineCloudUpload className="h-5 w-5 mx-auto mb-2" />
+                                                <p>Click to upload or drag and drop</p>
+                                                <p>SVG, PNG, JPG or GIF (max. 400 x 400px)</p>
+                                            </div>
+                                        ) : (
+                                            <div className="relative">
+                                                <img
+                                                    src={imageList[0].data_url}
+                                                    alt="Firm Logo"
+                                                    className="w-32 h-32 object-contain rounded-md"
+                                                />
+                                                <button
+                                                    onClick={onImageRemoveAll}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                                >
+                                                    x
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </ImageUploading>
+                        </div>
+                        {/* Email */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Email of Firm</label>
+                            <input
+                                name="email"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        {/* Address */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Address</label>
+                            <input
+                                name="address"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.address}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    {/* Right side fields */}
+                    <div className='flex-1 ml-9'>
+                        {/* Name */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Name of Firm</label>
+                            <input
+                                name="name"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.name}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        {/* Phone Number */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Firm Phone Number</label>
+                            <input
+                                name="phone"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        {/* Registration Number */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Firm Registration #</label>
+                            <input
+                                name="registration"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.registration}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          {/* email */}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Email of Firm</label>
-            <input
-              type="email"
-              placeholder="Enter here"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-          {/* address */}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Address</label>
-            <input
-              type="text"
-              placeholder="Enter here"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-          {/* packages */}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Assign Package</label>
-            <select className="w-full p-2 border border-gray-300 rounded-md">
-              <option value="">Select Package</option>
-              <option value="basic">Basic</option>
-              <option value="premium">Premium</option>
-              <option value="enterprise">Enterprise</option>
-            </select>
-          </div>
+            {/* Second container */}
+            <div className='bg-white shadow-xl rounded-lg p-4 mt-10'>
+                <p className='text-3xl font-bold'>Add Admin</p>
+                {/* Profile Pic */}
+                <div className='flex justify-start'>
+                    <div className='flex-1'>
+                        <div className='flex flex-row space-x-8 items-center'>
+                            <p>Profile Pic</p>
+                            <ImageUploading
+                                multiple={false}
+                                value={adminImages}
+                                onChange={onAdminChange}
+                                maxNumber={1}
+                                dataURLKey="data_url"
+                            >
+                                {({ imageList, onImageUpload, onImageRemoveAll }) => (
+                                    <div className='border-dashed rounded-md p-1 border-2 py-6 flex flex-col items-center mt-6'>
+                                        {imageList.length === 0 ? (
+                                            <div
+                                                className='cursor-pointer text-gray-500 text-center'
+                                                onClick={onImageUpload}
+                                            >
+                                                <MdOutlineCloudUpload className="h-5 w-5 mx-auto mb-2" />
+                                                <p>Click to upload or drag and drop</p>
+                                                <p>SVG, PNG, JPG or GIF (max. 400 x 400px)</p>
+                                            </div>
+                                        ) : (
+                                            <div className="relative">
+                                                <img
+                                                    src={imageList[0].data_url}
+                                                    alt="Admin Profile"
+                                                    className="w-32 h-32 object-contain rounded-md"
+                                                />
+                                                <button
+                                                    onClick={onImageRemoveAll}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                                                >
+                                                    x
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </ImageUploading>
+                        </div>
+                        {/* First Name */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>First Name</label>
+                            <input
+                                name="firstName"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.firstName}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        {/* Last Name */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Last Name</label>
+                            <input
+                                name="lastName"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.lastName}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                    {/* Admin Email */}
+                    <div className='flex-1 ml-7'>
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Email</label>
+                            <input
+                                type='email'
+                                name="adminEmail"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.adminEmail}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        {/* Admin Password */}
+                        <div className='mt-4'>
+                            <label className='mb-2 block'>Password</label>
+                            <input
+                                type='password'
+                                name="adminPassword"
+                                placeholder='Enter here'
+                                className='border p-2 border-black w-full rounded-md'
+                                value={formData.adminPassword}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div className='flex justify-end mt-8'>
+                <button 
+                    className={`text-white bg-blue-500 rounded-md p-2 w-96 flex justify-center items-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`} 
+                    onClick={handleSubmit} 
+                    disabled={loading} // Disable button while loading
+                >
+                    {loading ? <ThreeDots height="20" width="20" color="#ffffff" /> : "Submit"}
+                </button>
+            </div>
+            
+            <ToastContainer />
         </div>
-        {/* div 2 */}
-        <div className="md:w-1/2 md:pl-8">
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Name Of Firm</label>
-            <input
-              type="text"
-              placeholder="Enter here"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-          {/* phone number */}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Firm Phone Number</label>
-            <input
-              type="text"
-              placeholder="Enter here"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-          {/* registration number */}
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">Firm Registration #</label>
-            <input
-              type="number"
-              placeholder="Enter here"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default CompanyFirm2;
+export default AddFirm;
