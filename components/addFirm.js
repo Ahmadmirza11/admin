@@ -9,9 +9,11 @@ import 'react-toastify/dist/ReactToastify.css'; // Ensure to import CSS for noti
 import { ThreeDots } from 'react-loader-spinner';
 
 const AddFirm = () => {
+    // Access the selected firm and token from the Redux store
     const selectedFirm = useSelector((state) => state.firms.selectedFirm);
     const token = useSelector((state) => state.auth.token);
     
+    // State for images, admin images, form data, and loading status
     const [images, setImages] = useState([]);
     const [adminImages, setAdminImages] = useState([]);
     const [formData, setFormData] = useState({
@@ -25,16 +27,19 @@ const AddFirm = () => {
         adminEmail: '',
         adminPassword: ''
     });
-    const [loading, setLoading] = useState(false); // Loading state
+    const [loading, setLoading] = useState(false); // Loading state for the submit button
 
+    // Handle image upload for firm logo
     const onChange = (imageList) => {
         setImages(imageList);
     };
 
+    // Handle image upload for admin profile picture
     const onAdminChange = (imageList) => {
         setAdminImages(imageList);
     };
 
+    // Handle changes in input fields
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -43,10 +48,12 @@ const AddFirm = () => {
         }));
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission behavior
         setLoading(true); // Set loading to true when starting the request
 
+        // Prepare data to send to the API
         const dataToSend = {
             name: formData.name,
             registration: formData.registration,
@@ -60,6 +67,7 @@ const AddFirm = () => {
         };
 
         try {
+            // Send PUT request to update the firm
             const response = await axios.put(`https://accountingsaas.onrender.com/api/users/admin/edit-firm/${selectedFirm._id}`, dataToSend, {
                 headers: { 
                     'x-auth-token': token,
@@ -67,8 +75,25 @@ const AddFirm = () => {
                 }
             });
             console.log("Response:", response.data);
-            toast.success("Successfully updated the firm!");
+            toast.success("Successfully updated the firm!"); // Show success notification
+
+            // Clear the form fields after successful submission
+            setFormData({
+                email: '',
+                address: '',
+                name: '',
+                phone: '',
+                registration: '',
+                firstName: '',
+                lastName: '',
+                adminEmail: '',
+                adminPassword: ''
+            });
+            setImages([]); // Clear firm logo images
+            setAdminImages([]); // Clear admin profile images
+
         } catch (error) {
+            // Handle errors during the API call
             if (error.response) {
                 console.error("Error response:", error.response.data);
                 toast.error("Error: " + error.response.data.message || "Something went wrong.");
